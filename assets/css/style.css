@@ -1,0 +1,108 @@
+:root {
+
+    /* FONTS */
+    --primary-font: 'lobster';
+    --secondary-font: 'mooli-regular';
+
+    /* COLORS */
+    --light-grey: #f1f1f6;
+    --medium-grey: #e6e6eb;
+    --blue: #0079ff;
+
+}
+
+@font-face {
+    font-family: 'lobster';
+    src: url('../fonts/Lobster-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'mooli-regular';
+    src: url('../fonts/Mooli-Regular.ttf');
+}
+
+body {
+    font-family: var(--secondary-font);
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+h1 {
+    font-family: var(--primary-font);
+    font-size: 3rem;
+    margin: 30px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 10px;
+}
+
+.task-container {
+    background-color: var(--light-grey);
+    padding: 30px;
+    margin: 20px;
+    border-radius: 30px;
+    cursor: move;
+}
+
+.task-container:hover {
+    background-color: var(--medium-grey);
+}
+
+.task {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-utils {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.task-utils li {
+    padding: 10px;
+}
+
+.task-add {
+    position: fixed;
+    bottom: 0;
+    margin: 30px;
+    width: 100%;
+}
+
+.task-form {
+    margin: auto;
+}
+
+.task-name {
+    font-family: var(--secondary-font);
+    font-size: 1.2rem;
+    padding: 10px;
+    border-radius: 30px;
+}
+
+.task-valid {
+    background-color: var(--blue);
+    padding: 15px;
+    border-radius: 40px;
+}
+
+.task-valid:hover {
+    background-color: #3292ff;
+}
+
+.notif {
+    background-color: var(--light-grey);
+    font-size: 1.2rem;
+    margin: auto;
+    width: 30%;
+    padding: 20px;
+    border-radius: 30px;
+}
