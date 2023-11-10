@@ -40,7 +40,7 @@ include_once 'includes/_db.php';
                     };
 
                     // DISPLAY
-                    $query = $dbCo->prepare("SELECT * FROM task WHERE state = false ORDER BY creation_date DESC;");
+                    $query = $dbCo->prepare("SELECT * FROM task WHERE state = false ORDER BY priority DESC;");
                     $query->execute();
                     $result = $query->fetchAll();
                     foreach ($result as $task) {
@@ -60,16 +60,23 @@ include_once 'includes/_db.php';
                         <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
                         <input class="task-valid" type="submit" value="&#x2714">
                     </form>
+                    </div>
                 <?php
                     } else {
                 ?>
                     <li id=<?= $task['id_task'] ?> class="task">
                         <h2><?= $task['name'] ?></h2>
-                        <ul class="task-utils">
-                            <li class="done"><a href="action.php?id=<?= $task['id_task'] ?>&action=done">&#x2705</a></li>
-                            <li class="modify"><a href="?id=<?= $task['id_task'] ?>&action=mod">&#x24C2</a></li>
-                            <li class="delete"><a href="action.php?id=<?= $task['id_task'] ?>&action=del">&#x274C</a></li>
-                        </ul>
+                        <div class="utils-global">
+                            <div class="task-move">
+                                <a href="?id=<?= $task['id_task'] ?>&move=up">&#x1F53C</a>
+                                <a href="?id=<?= $task['id_task'] ?>&move=down">&#x1F53D</a>
+                            </div>
+                            <ul class="task-utils">
+                                <li class="done"><a href="action.php?id=<?= $task['id_task'] ?>&action=done">&#x2705</a></li>
+                                <li class="modify"><a href="?id=<?= $task['id_task'] ?>&action=mod">&#x24C2</a></li>
+                                <li class="delete"><a href="action.php?id=<?= $task['id_task'] ?>&action=del">&#x274C</a></li>
+                            </ul>
+                        </div>
                     </li>
                     </div>
                 <?php
@@ -87,7 +94,7 @@ include_once 'includes/_db.php';
         </div>
     </main>
 
-    <script src="assets/js/script.js"></script>
+    <!-- <script src="assets/js/script.js"></script> -->
 </body>
 
 </html>

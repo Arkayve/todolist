@@ -60,6 +60,12 @@ h2 {
     align-items: center;
 }
 
+.utils-global {
+    display: flex;
+    align-items: center;
+}
+
+.task-move, 
 .task-utils {
     display: flex;
     flex-direction: column;
@@ -67,6 +73,12 @@ h2 {
 }
 
 .task-utils li {
+    font-size: 2rem;
+    padding: 10px;
+}
+
+.task-move a {
+    font-size: 2rem;
     padding: 10px;
 }
 
