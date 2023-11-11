@@ -44,7 +44,7 @@ h2 {
 
 .task-container {
     background-color: var(--light-grey);
-    padding: 30px;
+    padding: 10px;
     margin: 20px;
     border-radius: 30px;
     cursor: move;
@@ -73,12 +73,12 @@ h2 {
 }
 
 .task-utils li {
-    font-size: 2rem;
+    font-size: 1.5rem;
     padding: 10px;
 }
 
 .task-move a {
-    font-size: 2rem;
+    font-size: 1.5rem;
     padding: 10px;
 }
 

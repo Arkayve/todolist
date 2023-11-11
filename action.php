@@ -54,6 +54,57 @@ else if (isset($_POST['task-modify']) && isset($_SESSION['token']) && isset($_PO
         'id' => intval(strip_tags($_POST['id']))
     ]);
     $_SESSION['msg'] = 3;
+}
+
+// MOVE
+else if (isset($_GET['move']) && $_GET['move'] === 'up' && isset($_GET['id'])) {
+    $query = $dbCo->prepare("SELECT priority FROM task WHERE id_task = :id");
+    $query->execute([
+        'id' => intval(strip_tags($_GET['id']))
+    ]);
+    $priority = $query->fetchColumn();
+    $query = $dbCo->prepare("SELECT COUNT(state) FROM task WHERE state = 0");
+    $query->execute();
+    $maxPriority = $query->fetchColumn();
+    if (intval($priority) === intval($maxPriority)) {
+        $_SESSION['msg'] = 5;
+        header('location: index.php');
+    } else {
+        $query = $dbCo->prepare("UPDATE task SET priority = :priority WHERE priority = :target");
+        $query->execute([
+            'priority' => $priority,
+            'target' => $priority + 1
+        ]);
+        $priority ++;
+        $query = $dbCo->prepare("UPDATE task SET priority = :priority WHERE id_task = :id");
+        $query->execute([
+            'priority' => $priority,
+            'id' => intval(strip_tags($_GET['id']))
+        ]);
+    };
+}
+else if (isset($_GET['move']) && $_GET['move'] === 'down' && isset($_GET['id'])) {
+    $query = $dbCo->prepare("SELECT priority FROM task WHERE id_task = :id");
+    $query->execute([
+        'id' => intval(strip_tags($_GET['id']))
+    ]);
+    $priority = $query->fetchColumn();
+    if (intval($priority) === 1) {
+        $_SESSION['msg'] = 5;
+        header('location: index.php');
+    } else {
+        $query = $dbCo->prepare("UPDATE task SET priority = :priority WHERE priority = :target");
+        $query->execute([
+            'priority' => $priority,
+            'target' => $priority - 1
+        ]);
+        $priority --;
+        $query = $dbCo->prepare("UPDATE task SET priority = :priority WHERE id_task = :id");
+        $query->execute([
+            'priority' => $priority,
+            'id' => intval(strip_tags($_GET['id']))
+        ]);
+    };
 };
 
 header('location: index.php');

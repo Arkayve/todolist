@@ -47,7 +47,7 @@ include_once 'includes/_db.php';
                 ?>
                     <div class="task-container" draggable="true">
                 <?php
-                    if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === intval($_GET['id'])) {
+                    if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
                         $query = $dbCo->prepare("SELECT name FROM task WHERE id_task = :id");
                         $query->execute([
                             'id' => intval(strip_tags($_GET['id']))
@@ -68,8 +68,8 @@ include_once 'includes/_db.php';
                         <h2><?= $task['name'] ?></h2>
                         <div class="utils-global">
                             <div class="task-move">
-                                <a href="?id=<?= $task['id_task'] ?>&move=up">&#x1F53C</a>
-                                <a href="?id=<?= $task['id_task'] ?>&move=down">&#x1F53D</a>
+                                <a href="action.php?id=<?= $task['id_task'] ?>&move=up">&#x1F53C</a>
+                                <a href="action.php?id=<?= $task['id_task'] ?>&move=down">&#x1F53D</a>
                             </div>
                             <ul class="task-utils">
                                 <li class="done"><a href="action.php?id=<?= $task['id_task'] ?>&action=done">&#x2705</a></li>
