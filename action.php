@@ -39,8 +39,12 @@ else if (isset($_GET['action']) && $_GET['action'] === 'del' && isset($_GET['id'
 
 // DONE
 else if (isset($_GET['action']) && $_GET['action'] === 'done' && isset($_GET['id'])) {
-    $query = $dbCo->prepare("UPDATE task SET state = true, priority = 0 WHERE id_task = :id");
+    $thisDate = new DateTime();
+    $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
+    $formattedDate = $thisDate->format("Y-m-d H:i:s");
+    $query = $dbCo->prepare("UPDATE task SET done_date = :date, state = true, priority = 0 WHERE id_task = :id");
     $query->execute([
+        'date' => $formattedDate,
         'id' => intval(strip_tags($_GET['id']))
     ]);
     $_SESSION['msg'] = 1;

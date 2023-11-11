@@ -18,6 +18,23 @@ include_once 'includes/_db.php';
 
     <header>
         <h1>Ma to do list</h1>
+        <?php
+            $query = $dbCo->prepare("SELECT alarm_date FROM task WHERE alarm_date IS NOT NULL;");
+            $query->execute();
+            $result = $query->fetchAll();
+            $thisDate = new DateTime();
+            $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
+            $formattedDate = $thisDate->format("Y-m-d");
+            foreach ($result as $alarmDate) {
+                if ($formattedDate === substr($alarmDate['alarm_date'], 0, -9)) {
+                        $msg = "Une tâche est notée pour aujourd'hui.";
+                        echo "<script>alert('$msg');</script>";
+                ?>
+                    <p class="alert"><span>⚠</span><br>Une tâche est notée pour aujourd'hui.</p>
+                <?php 
+                };
+            };
+        ?>
     </header>
 
     <main>
@@ -58,7 +75,7 @@ include_once 'includes/_db.php';
                                 <input class="task-name" type="text" name="task-modify" value="<?= $result['name'] ?>">
                                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
                                 <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
-                                <input class="task-valid" type="submit" value="&#x2714">
+                                <input class="task-valid" type="submit" value="✔">
                             </form>
                     </div>
                         <?php
@@ -72,7 +89,7 @@ include_once 'includes/_db.php';
                                 <input class="date" type="datetime-local" name="alarm" value="<?= $formattedDate ?>" min="<?= $formattedDate ?>" max="">
                                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
                                 <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
-                                <input class="task-valid" class="bg-blue" type="submit" value="&#x2795">
+                                <input class="task-valid" class="bg-blue" type="submit" value="➕">
                             </form>
                     </div>
                         <?php
@@ -82,15 +99,23 @@ include_once 'includes/_db.php';
                             <li id=<?= $task['id_task'] ?> class="task">
                                 <div>
                                     <h2><?= $task['name'] ?></h2>
-                                    <time class="alarm" datetime="<?= $task['alarm'] ?>"><?= substr($task['alarm'], 0, -3) ?></time>
+                                    <time class="alarm" datetime="<?= $task['alarm_date'] ?>">
+                                        <?php
+                                            echo substr($task['alarm_date'], 0, -3);
+                                            $thisDate = new DateTime();
+                                            $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
+                                            $formattedDate = $thisDate->format("Y-m-d");
+                                            if ($task['alarm_date'] <> NULL && $formattedDate === substr($task['alarm_date'], 0, -9)) echo '🚩';
+                                        ?>
+                                    </time>
                                 </div>
                                 <ul class="task-utils">
-                                    <li><a href="?id=<?= $task['id_task'] ?>&action=alarm">&#x1F514</a></li>
-                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=up">&#x1F53C</a></li>
-                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=down">&#x1F53D</a></li>
-                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=done">&#x2705</a></li>
-                                    <li><a href="?id=<?= $task['id_task'] ?>&action=mod">&#x1F4DD</a></li>
-                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=del">&#x274C</a></li>
+                                    <li><a href="?id=<?= $task['id_task'] ?>&action=alarm">🔔</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=up">🔼</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=down">🔽</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=done">✅</a></li>
+                                    <li><a href="?id=<?= $task['id_task'] ?>&action=mod">📝</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=del">❌</a></li>
                                 </ul>
                             </li>
                     </div>
@@ -104,8 +129,29 @@ include_once 'includes/_db.php';
             <form class="task-form" action="action.php" method="POST">
                 <input class="task-name" type="text" name="task-name" placeholder="Ajouter une tâche">
                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-                <input class="task-valid" class="bg-blue" type="submit" value="&#x2795">
+                <input class="task-valid" class="bg-blue" type="submit" value="➕">
             </form>
+        </div>
+        <div class="task-done">
+            <h2><a href="?action=display-done">Afficher les tâches terminées ⬇</a></h2>
+            <?php
+                if (isset($_GET['action']) && $_GET['action'] === 'display-done') {
+                    $query = $dbCo->prepare("SELECT * FROM task WHERE state = true ORDER BY done_date DESC;");
+                    $query->execute();
+                    $result = $query->fetchAll();
+                    foreach ($result as $task) {
+                        ?>
+                            <li id=<?= $task['id_task'] ?> class="task">
+                                <h2><?= $task['name'] ?></h2>
+                                <time datetime="<?= $task['done_date'] ?>"><?= $task['done_date'] ?></time>
+                            </li>
+                        <?php
+                    };
+            ?>
+                    <h2><a href="action.php">Masquer les tâches terminées ⬆</a></h2>
+            <?php
+                };
+            ?>
         </div>
     </main>
 

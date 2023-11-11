@@ -43,6 +43,14 @@ h2 {
     margin: 10px;
 }
 
+.alert {
+    color: red;
+}
+
+.alert span {
+    font-size: 2rem;
+}
+
 .task-container {
     background-color: var(--light-grey);
     padding: 10px;
