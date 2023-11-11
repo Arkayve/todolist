@@ -8,6 +8,7 @@
     --light-grey: #f1f1f6;
     --medium-grey: #e6e6eb;
     --blue: #0079ff;
+    --light-red: #c65049;
 
 }
 
@@ -33,12 +34,12 @@ a {
 
 h1 {
     font-family: var(--primary-font);
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin: 30px;
 }
 
 h2 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin: 10px;
 }
 
@@ -60,30 +61,16 @@ h2 {
     align-items: center;
 }
 
-.utils-global {
-    display: flex;
-    align-items: center;
-}
-
-.task-move, 
 .task-utils {
     display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .task-utils li {
-    font-size: 1.5rem;
-    padding: 10px;
-}
-
-.task-move a {
-    font-size: 1.5rem;
-    padding: 10px;
+    padding: 5px;
 }
 
 .task-add {
-    position: fixed;
+    position: sticky;
     bottom: 0;
     margin: 30px;
     width: 100%;
@@ -93,16 +80,22 @@ h2 {
     margin: auto;
 }
 
+.date,
 .task-name {
     font-family: var(--secondary-font);
-    font-size: 1.2rem;
+    font-size: 1rem;
     padding: 10px;
     border-radius: 30px;
 }
 
+.alarm {
+    font-size: 0.7rem;
+    color: var(--light-red);
+}
+
 .task-valid {
     background-color: var(--blue);
-    padding: 15px;
+    padding: 10px;
     border-radius: 40px;
 }
 

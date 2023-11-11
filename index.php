@@ -46,38 +46,53 @@ include_once 'includes/_db.php';
                     foreach ($result as $task) {
                 ?>
                     <div class="task-container" draggable="true">
-                <?php
-                    if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
-                        $query = $dbCo->prepare("SELECT name FROM task WHERE id_task = :id");
-                        $query->execute([
-                            'id' => intval(strip_tags($_GET['id']))
-                        ]);
-                        $result = $query->fetch();
-                ?>
-                    <form action="action.php" method="POST">
-                        <input class="task-name" type="text" name="task-modify" value="<?= $result['name'] ?>">
-                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-                        <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
-                        <input class="task-valid" type="submit" value="&#x2714">
-                    </form>
+                        <?php
+                            if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                                $query = $dbCo->prepare("SELECT name FROM task WHERE id_task = :id");
+                                $query->execute([
+                                    'id' => intval(strip_tags($_GET['id']))
+                                ]);
+                                $result = $query->fetch();
+                        ?>
+                            <form action="action.php" method="POST">
+                                <input class="task-name" type="text" name="task-modify" value="<?= $result['name'] ?>">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                                <input class="task-valid" type="submit" value="&#x2714">
+                            </form>
                     </div>
-                <?php
-                    } else {
-                ?>
-                    <li id=<?= $task['id_task'] ?> class="task">
-                        <h2><?= $task['name'] ?></h2>
-                        <div class="utils-global">
-                            <div class="task-move">
-                                <a href="action.php?id=<?= $task['id_task'] ?>&move=up">&#x1F53C</a>
-                                <a href="action.php?id=<?= $task['id_task'] ?>&move=down">&#x1F53D</a>
-                            </div>
-                            <ul class="task-utils">
-                                <li class="done"><a href="action.php?id=<?= $task['id_task'] ?>&action=done">&#x2705</a></li>
-                                <li class="modify"><a href="?id=<?= $task['id_task'] ?>&action=mod">&#x24C2</a></li>
-                                <li class="delete"><a href="action.php?id=<?= $task['id_task'] ?>&action=del">&#x274C</a></li>
-                            </ul>
-                        </div>
-                    </li>
+                        <?php
+                            }
+                            else if (isset($_GET['action']) && $_GET['action'] === 'alarm' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                                $thisDate = new DateTime();
+                                $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
+                                $formattedDate = $thisDate->format("Y-m-d H:i");
+                        ?>
+                            <form action="action.php" method="POST">
+                                <input class="date" type="datetime-local" name="alarm" value="<?= $formattedDate ?>" min="<?= $formattedDate ?>" max="">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                                <input class="task-valid" class="bg-blue" type="submit" value="&#x2795">
+                            </form>
+                    </div>
+                        <?php
+                            }                     
+                            else {
+                        ?>
+                            <li id=<?= $task['id_task'] ?> class="task">
+                                <div>
+                                    <h2><?= $task['name'] ?></h2>
+                                    <time class="alarm" datetime="<?= $task['alarm'] ?>"><?= substr($task['alarm'], 0, -3) ?></time>
+                                </div>
+                                <ul class="task-utils">
+                                    <li><a href="?id=<?= $task['id_task'] ?>&action=alarm">&#x1F514</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=up">&#x1F53C</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=down">&#x1F53D</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=done">&#x2705</a></li>
+                                    <li><a href="?id=<?= $task['id_task'] ?>&action=mod">&#x1F4DD</a></li>
+                                    <li><a href="action.php?id=<?= $task['id_task'] ?>&action=del">&#x274C</a></li>
+                                </ul>
+                            </li>
                     </div>
                 <?php
                     };

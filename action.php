@@ -57,7 +57,7 @@ else if (isset($_POST['task-modify']) && isset($_SESSION['token']) && isset($_PO
 }
 
 // MOVE
-else if (isset($_GET['move']) && $_GET['move'] === 'up' && isset($_GET['id'])) {
+else if (isset($_GET['action']) && $_GET['action'] === 'up' && isset($_GET['id'])) {
     $query = $dbCo->prepare("SELECT priority FROM task WHERE id_task = :id");
     $query->execute([
         'id' => intval(strip_tags($_GET['id']))
@@ -83,7 +83,7 @@ else if (isset($_GET['move']) && $_GET['move'] === 'up' && isset($_GET['id'])) {
         ]);
     };
 }
-else if (isset($_GET['move']) && $_GET['move'] === 'down' && isset($_GET['id'])) {
+else if (isset($_GET['action']) && $_GET['action'] === 'down' && isset($_GET['id'])) {
     $query = $dbCo->prepare("SELECT priority FROM task WHERE id_task = :id");
     $query->execute([
         'id' => intval(strip_tags($_GET['id']))
@@ -105,6 +105,16 @@ else if (isset($_GET['move']) && $_GET['move'] === 'down' && isset($_GET['id']))
             'id' => intval(strip_tags($_GET['id']))
         ]);
     };
+}
+
+// ALARM
+else if (isset($_POST['alarm']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token'] && strlen($_POST['alarm']) > 0 && isset($_POST['id'])) {
+    $query = $dbCo->prepare("UPDATE task SET alarm = :alarm WHERE id_task = :id");
+    $query->execute([
+        'alarm' => $_POST['alarm'],
+        'id' => intval(strip_tags($_POST['id']))
+    ]);
+    $_SESSION['msg'] = 6;
 };
 
 header('location: index.php');
