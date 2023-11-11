@@ -64,6 +64,7 @@ include_once 'includes/_db.php';
                 ?>
                     <div class="task-container" draggable="true">
                         <?php
+                            // MODIFY
                             if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
                                 $query = $dbCo->prepare("SELECT name FROM task WHERE id_task = :id");
                                 $query->execute([
@@ -80,6 +81,7 @@ include_once 'includes/_db.php';
                     </div>
                         <?php
                             }
+                            // ALERT
                             else if (isset($_GET['action']) && $_GET['action'] === 'alarm' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
                                 $thisDate = new DateTime();
                                 $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
@@ -93,7 +95,31 @@ include_once 'includes/_db.php';
                             </form>
                     </div>
                         <?php
-                            }                     
+                            }
+                            // THEME
+                            else if (isset($_GET['action']) && $_GET['action'] === 'theme' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                                $query = $dbCo->prepare("SELECT * FROM theme");
+                                $query->execute();
+                                $result = $query->fetchAll();
+                        ?>
+                            <div class="theme">
+                        <?php
+                            foreach ($result as $theme) {
+                        ?>
+                            <form action="action.php" method="POST">
+                                <input class="theme-name" type="submit" name="theme" value="<?= $theme['name'] ?>">
+                                <input type="hidden" name="id_theme" value="<?= $theme['id_theme'] ?>">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                            </form>
+                        <?php
+                            };
+                        ?>
+                            </div>
+                    </div>
+                        <?php
+                            }    
+                            // CLASSIC                 
                             else {
                         ?>
                             <li id=<?= $task['id_task'] ?> class="task">
@@ -111,6 +137,7 @@ include_once 'includes/_db.php';
                                 </div>
                                 <ul class="task-utils">
                                     <li><a href="?id=<?= $task['id_task'] ?>&action=alarm">🔔</a></li>
+                                    <li><a href="?id=<?= $task['id_task'] ?>&action=theme">🔖</a></li>
                                     <li><a href="action.php?id=<?= $task['id_task'] ?>&action=up">🔼</a></li>
                                     <li><a href="action.php?id=<?= $task['id_task'] ?>&action=down">🔽</a></li>
                                     <li><a href="action.php?id=<?= $task['id_task'] ?>&action=done">✅</a></li>
@@ -125,6 +152,7 @@ include_once 'includes/_db.php';
                 ?>
             </ul>
         </div>
+        <!-- ADD -->
         <div class="task-add">
             <form class="task-form" action="action.php" method="POST">
                 <input class="task-name" type="text" name="task-name" placeholder="Ajouter une tâche">
@@ -135,6 +163,7 @@ include_once 'includes/_db.php';
         <div class="task-done">
             <h2><a href="?action=display-done">Afficher les tâches terminées ⬇</a></h2>
             <?php
+                // TASK ALREADY DONE
                 if (isset($_GET['action']) && $_GET['action'] === 'display-done') {
                     $query = $dbCo->prepare("SELECT * FROM task WHERE state = true ORDER BY done_date DESC;");
                     $query->execute();

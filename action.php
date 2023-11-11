@@ -139,6 +139,24 @@ else if (isset($_POST['back']) && isset($_POST['id']) && isset($_SESSION['token'
         'id' => intval(strip_tags($_POST['id']))
     ]);
     $_SESSION['msg'] = 4;
+}
+
+// ADD THEME
+else if (isset($_POST['theme']) && isset($_POST['id']) && isset($_POST['id_theme']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token']) {
+    $query = $dbCo->prepare("SELECT * FROM category");
+    $query->execute();
+    $categories = $query->fetchAll();
+    foreach($categories as $category) {
+        if($category['id_task'] === $_POST['id'] && $category['id_theme'] === $_POST['id_theme']) {
+            header('location: index.php');
+        };
+    };
+    $query = $dbCo->prepare("INSERT INTO category(id_task, id_theme) VALUES (:id, :id_theme)");
+    $query->execute([
+        'id' => intval(strip_tags($_POST['id'])),
+        'id_theme' => intval(strip_tags($_POST['id_theme']))
+    ]);
+    $_SESSION['msg'] = 7;
 };
 
 header('location: index.php');

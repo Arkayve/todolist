@@ -119,3 +119,20 @@ h2 {
     padding: 20px;
     border-radius: 30px;
 }
+
+.theme {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.theme-name {
+    font-family: var(--secondary-font);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 30px;
+}
+
+.theme-name:hover {
+    background-color: #3292ff;
+}
