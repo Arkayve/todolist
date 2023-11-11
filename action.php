@@ -42,6 +42,15 @@ else if (isset($_GET['action']) && $_GET['action'] === 'done' && isset($_GET['id
     $thisDate = new DateTime();
     $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
     $formattedDate = $thisDate->format("Y-m-d H:i:s");
+    $query = $dbCo->prepare("SELECT priority FROM task WHERE id_task = :id");
+    $query->execute([
+        'id' => intval(strip_tags($_GET['id']))
+    ]);
+    $priority = $query->fetchColumn();
+    $query = $dbCo->prepare("UPDATE task SET priority = priority - 1 WHERE state = 0 AND priority > :priority");
+    $query->execute([
+        'priority' => $priority
+    ]);
     $query = $dbCo->prepare("UPDATE task SET done_date = :date, state = true, priority = 0 WHERE id_task = :id");
     $query->execute([
         'date' => $formattedDate,
@@ -119,6 +128,17 @@ else if (isset($_POST['alarm']) && isset($_SESSION['token']) && isset($_POST['to
         'id' => intval(strip_tags($_POST['id']))
     ]);
     $_SESSION['msg'] = 6;
+}
+
+// TAKE BACK A TASK
+else if (isset($_POST['back']) && isset($_POST['id']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token']) {
+    $query = $dbCo->prepare("UPDATE task SET priority = priority + 1 WHERE state = 0");
+    $query->execute();
+    $query = $dbCo->prepare("UPDATE task SET state = 0, done_date = NULL, priority = 1 WHERE id_task = :id");
+    $query->execute([
+        'id' => intval(strip_tags($_POST['id']))
+    ]);
+    $_SESSION['msg'] = 4;
 };
 
 header('location: index.php');

@@ -142,6 +142,11 @@ include_once 'includes/_db.php';
                     foreach ($result as $task) {
                         ?>
                             <li id=<?= $task['id_task'] ?> class="task">
+                                <form action="action.php" method="POST">
+                                    <input type="submit" name="back" value="🔄">
+                                    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                    <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                                </form>
                                 <h2><?= $task['name'] ?></h2>
                                 <time datetime="<?= $task['done_date'] ?>"><?= $task['done_date'] ?></time>
                             </li>
