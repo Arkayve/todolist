@@ -175,6 +175,30 @@ else if (isset($_POST['remove-theme']) && isset($_POST['id']) && isset($_POST['i
         'id_theme' => intval(strip_tags($_POST['id_theme']))
     ]);
     $_SESSION['msg'] = 8;
+}
+
+// COLOR
+else if (isset($_POST['color']) && isset($_POST['id']) && isset($_POST['id_color']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token']) {
+    $query =$dbCo->prepare("SELECT id_color FROM task WHERE id_task = :id");
+    $query->execute([
+        'id' => intval(strip_tags($_POST['id']))
+    ]);
+    $result = $query->fetch();
+    if (isset($result['id_color']) && $result['id_color'] === $_POST['id_color']) {
+        $query = $dbCo->prepare("UPDATE task SET id_color = NULL WHERE id_task = :id");
+        $query->execute([
+            'id' => intval(strip_tags($_POST['id']))
+        ]);
+        $_SESSION['msg'] = 11;
+    }
+    else {
+        $query = $dbCo->prepare("UPDATE task SET id_color = :id_color WHERE id_task = :id");
+        $query->execute([
+            'id' => intval(strip_tags($_POST['id'])),
+            'id_color' => intval(strip_tags($_POST['id_color']))
+        ]);
+        $_SESSION['msg'] = 10;
+    };
 };
 
 header('location: index.php');

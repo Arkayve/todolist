@@ -17,6 +17,23 @@ include_once 'includes/_db.php';
 <body>
 
     <header>
+        <nav id="mySidenav" class="sidenav">
+            <a id="closeBtn" href="#" class="close">✖</a>
+            <ul>
+                <?php
+                    $query = $dbCo->prepare("SELECT * FROM theme");
+                    $query->execute();
+                    $result = $query->fetchAll();
+                    foreach ($result as $theme) {
+                ?>
+                    <li><a href="?theme=<?= $theme['id_theme'] ?>"><?= $theme['name'] ?></a></li>
+                <?php
+                    };
+                ?>
+                <a href="index.php">Toutes les tâches</a>
+            </ul>
+        </nav>
+        <a href="#" id="openBtn" class="burger-icon">🍔</a>
         <h1>Ma to do list</h1>
         <?php
             $query = $dbCo->prepare("SELECT alarm_date FROM task WHERE alarm_date IS NOT NULL;");
@@ -61,10 +78,29 @@ include_once 'includes/_db.php';
                     $query = $dbCo->prepare("SELECT * FROM task WHERE state = false ORDER BY priority DESC;");
                     $query->execute();
                     $result = $query->fetchAll();
+                    if (isset($_GET['theme'])) {
+                        $query = $dbCo->prepare("SELECT * FROM task WHERE state = false AND id_task IN ( SELECT id_task FROM category ) AND :id_theme IN ( SELECT id_theme FROM category );");
+                        $query->execute([
+                            'id_theme' => intval(strip_tags($_GET['theme']))
+                        ]);
+                        $result = $query->fetchAll();
+                    };
                     foreach ($result as $task) {
+                        if (isset($task['id_color'])) {
+                            $query = $dbCo->prepare("SELECT hex_value FROM color WHERE id_color = :id_color");
+                            $query->execute([
+                                'id_color' => intval(strip_tags($task['id_color']))
+                            ]);
+                            $color = $query->fetch();
+                ?>
+                    <div class="task-container" style="background-color: <?= $color['hex_value'] ?>">
+                <?php
+                        }
+                        else {
                 ?>
                     <div class="task-container">
-                        <?php
+                <?php
+                        };
                             // MODIFY
                             if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
                                 $query = $dbCo->prepare("SELECT name FROM task WHERE id_task = :id");
@@ -150,7 +186,30 @@ include_once 'includes/_db.php';
                             </div>
                     </div>
                         <?php
-                            }    
+                            }
+                            // COLOR
+                            else if (isset($_GET['action']) && $_GET['action'] === 'color' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                                $query = $dbCo->prepare("SELECT * FROM color");
+                                $query->execute();
+                                $result = $query->fetchAll();
+                        ?>
+                            <div class="theme">
+                        <?php
+                            foreach ($result as $color) {
+                        ?>
+                            <form action="action.php" method="POST">
+                                <input style="background-color: <?= $color['hex_value'] ?>" class="theme-name" type="submit" name="color" value="<?= $color['name'] ?>">
+                                <input type="hidden" name="id_color" value="<?= $color['id_color'] ?>">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                            </form>
+                        <?php
+                            };
+                        ?>
+                            </div>
+                    </div>
+                        <?php
+                            }
                             // CLASSIC                 
                             else {
                         ?>
@@ -192,6 +251,7 @@ include_once 'includes/_db.php';
                                 ?>
                                 </div>
                                 <ul class="task-utils">
+                                    <li><a href="?id=<?= $task['id_task'] ?>&action=color">🎨</a></li>
                                     <li><a href="?id=<?= $task['id_task'] ?>&action=alarm">🔔</a></li>
                                     <li><a href="?id=<?= $task['id_task'] ?>&action=theme">🔖</a></li>
                                     <li><a href="action.php?id=<?= $task['id_task'] ?>&action=up">🔼</a></li>
@@ -216,29 +276,37 @@ include_once 'includes/_db.php';
                 <input class="task-valid" class="bg-blue" type="submit" value="➕">
             </form>
         </div>
-        <div class="task-done">
-            <h2><a href="?action=display-done">Afficher les tâches terminées ⏬</a></h2>
+        <div class="task-done">    
             <?php
                 // TASK ALREADY DONE
                 if (isset($_GET['action']) && $_GET['action'] === 'display-done') {
+        ?>
+            <h2><a href="action.php">Masquer les tâches terminées ⏫</a></h2>
+        <?php
                     $query = $dbCo->prepare("SELECT * FROM task WHERE state = true ORDER BY done_date DESC;");
                     $query->execute();
                     $result = $query->fetchAll();
                     foreach ($result as $task) {
                         ?>
-                            <li id=<?= $task['id_task'] ?> class="task">
-                                <form action="action.php" method="POST">
-                                    <input type="submit" name="back" value="🔄">
-                                    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-                                    <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
-                                </form>
-                                <h2><?= $task['name'] ?></h2>
-                                <time datetime="<?= $task['done_date'] ?>"><?= $task['done_date'] ?></time>
-                            </li>
+                            <div class="task-container">
+                                <li id=<?= $task['id_task'] ?> class="task">
+                                    <form action="action.php" method="POST">
+                                        <input class="task-back" type="submit" name="back" value="🔄">
+                                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                        <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                                    </form>
+                                    <h2><?= $task['name'] ?></h2>
+                                    <div>
+                                        <p>Tâche effectuée le :</p>
+                                        <time class="done-time" datetime="<?= $task['done_date'] ?>"><?= $task['done_date'] ?></time>
+                                    </div>
+                                </li>
+                            </div>
                         <?php
-                    };
+                    };       
+                } else {
             ?>
-                    <h2><a href="action.php">Masquer les tâches terminées ⏫</a></h2>
+                <h2><a href="?action=display-done">Afficher les tâches terminées ⏬</a></h2>
             <?php
                 };
             ?>

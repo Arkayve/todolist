@@ -56,7 +56,6 @@ h2 {
     padding: 10px;
     margin: 20px;
     border-radius: 30px;
-    cursor: move;
 }
 
 .task-container:hover {
@@ -152,3 +151,73 @@ h2 {
     justify-content: space-around;
     align-items: center;
 }
+
+.task-back {
+    border: none;
+    font-size: 1.7rem;
+}
+
+.done-time {
+    color: var(--blue);
+}
+
+/* NAV */
+/* Sidenav menu */
+.sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: -250px;
+    background-color: var(--medium-grey);
+    padding-top: 60px;
+    transition: left 0.5s ease;
+  }
+  
+  /* Sidenav menu links */
+  .sidenav a {
+    padding: 10px 30px;
+    margin: 10px;
+    font-size: 1.2rem;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+    border-bottom: solid black 2px;
+  }
+
+  .sidenav .close {
+    border-bottom: none;
+  }
+  
+  .sidenav a:hover {
+    color: var(--blue);
+  }
+  
+  .sidenav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Active class */
+  .sidenav.active {
+    left: 0;
+  }
+  
+  /* Close btn */
+  .sidenav .close {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+  }
+  
+  /* Icône burger */
+  .burger-icon {
+    display: block;
+    font-size: 3rem;
+    width: 35px;
+    height: 5px;
+    margin: 6px 0;
+  }
