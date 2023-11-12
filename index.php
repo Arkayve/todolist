@@ -82,7 +82,7 @@ include_once 'includes/_db.php';
                     </div>
                         <?php
                             }
-                            // ALERT
+                            // ALARM
                             else if (isset($_GET['action']) && $_GET['action'] === 'alarm' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
                                 $thisDate = new DateTime();
                                 $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
@@ -109,7 +109,17 @@ include_once 'includes/_db.php';
                             <div class="theme">
                         <?php
                             foreach ($result as $theme) {
-                                
+                                $filteredCategories = array_filter($categories, fn($category) => $category['id_task'] === $_GET['id'] && $category['id_theme'] === $theme['id_theme']);
+                                if (!empty($filteredCategories)) {
+                        ?>
+                            <form action="action.php" method="POST">
+                                <input class="theme-name bg-blue" type="submit" name="theme" value="<?= $theme['name'] ?>">
+                                <input type="hidden" name="id_theme" value="<?= $theme['id_theme'] ?>">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                            </form>
+                        <?php
+                                } else {
                         ?>
                             <form action="action.php" method="POST">
                                 <input class="theme-name" type="submit" name="theme" value="<?= $theme['name'] ?>">
@@ -118,6 +128,7 @@ include_once 'includes/_db.php';
                                 <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
                             </form>
                         <?php
+                                };
                             };
                         ?>
                             </div>
@@ -139,6 +150,25 @@ include_once 'includes/_db.php';
                                             if ($task['alarm_date'] <> NULL && $formattedDate === substr($task['alarm_date'], 0, -9)) echo '🚩';
                                         ?>
                                     </time>
+                                </div>
+                                <div>
+                                <?php 
+                                    $query = $dbCo->prepare("SELECT * FROM category");
+                                    $query->execute();
+                                    $categories = $query->fetchAll();
+                                    foreach ($categories as $category) {
+                                        if ($task['id_task'] === $category['id_task']) {
+                                            $query = $dbCo->prepare("SELECT name FROM theme WHERE id_theme = :id_theme");
+                                            $query->execute([
+                                                'id_theme' => $category['id_theme']
+                                            ]);
+                                            $result = $query->fetch();
+                                ?>
+                                    <p class="task-theme"><a><?= $result['name'] ?></a></p>
+                                <?php                                      
+                                        };
+                                    };
+                                ?>
                                 </div>
                                 <ul class="task-utils">
                                     <li><a href="?id=<?= $task['id_task'] ?>&action=alarm">🔔</a></li>

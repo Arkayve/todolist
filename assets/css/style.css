@@ -135,3 +135,14 @@ h2 {
 .theme-name:hover {
     background-color: #3292ff;
 }
+
+.bg-blue {
+    background-color: #3292ff;
+}
+
+.task-theme {
+    border: solid black 1px;
+    border-radius: 30px;
+    padding: 5px;
+    margin: 5px;
+}

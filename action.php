@@ -122,7 +122,7 @@ else if (isset($_GET['action']) && $_GET['action'] === 'down' && isset($_GET['id
 
 // ALARM
 else if (isset($_POST['alarm']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token'] && strlen($_POST['alarm']) > 0 && isset($_POST['id'])) {
-    $query = $dbCo->prepare("UPDATE task SET alarm = :alarm WHERE id_task = :id");
+    $query = $dbCo->prepare("UPDATE task SET alarm_date = :alarm WHERE id_task = :id");
     $query->execute([
         'alarm' => $_POST['alarm'],
         'id' => intval(strip_tags($_POST['id']))
