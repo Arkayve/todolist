@@ -38,24 +38,25 @@ include_once 'includes/_db.php';
     </header>
 
     <main>
+        <?php
+            // NOTIFS
+            if (isset($_SESSION['msg'])) {
+                $query = $dbCo->prepare("SELECT name FROM msg WHERE id_msg = :id");
+                $query->execute([
+                    'id' => intval(strip_tags($_SESSION['msg']))
+                ]);
+                unset($_SESSION['msg']);
+                $result = $query->fetch();
+        ?>
+            <div id="notif" class="notif">
+                <h3><?= $result['name'] ?></h3>
+            </div>
+        <?php
+            };
+        ?>
         <div class="task-list">
             <ul>
                 <?php
-                    // NOTIFS
-                    if (isset($_SESSION['msg'])) {
-                        $query = $dbCo->prepare("SELECT name FROM msg WHERE id_msg = :id");
-                        $query->execute([
-                            'id' => intval(strip_tags($_SESSION['msg']))
-                        ]);
-                        unset($_SESSION['msg']);
-                        $result = $query->fetch();
-                ?>
-                    <div class="notif">
-                        <h3><?= $result['name'] ?></h3>
-                    </div>
-                <?php
-                    };
-
                     // DISPLAY
                     $query = $dbCo->prepare("SELECT * FROM task WHERE state = false ORDER BY priority DESC;");
                     $query->execute();
@@ -101,10 +102,14 @@ include_once 'includes/_db.php';
                                 $query = $dbCo->prepare("SELECT * FROM theme");
                                 $query->execute();
                                 $result = $query->fetchAll();
+                                $query = $dbCo->prepare("SELECT * FROM category");
+                                $query->execute();
+                                $categories = $query->fetchAll();
                         ?>
                             <div class="theme">
                         <?php
                             foreach ($result as $theme) {
+                                
                         ?>
                             <form action="action.php" method="POST">
                                 <input class="theme-name" type="submit" name="theme" value="<?= $theme['name'] ?>">
@@ -189,7 +194,7 @@ include_once 'includes/_db.php';
         </div>
     </main>
 
-    <!-- <script src="assets/js/script.js"></script> -->
+    <script src="assets/js/script.js"></script>
 </body>
 
 </html>

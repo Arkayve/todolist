@@ -146,10 +146,9 @@ else if (isset($_POST['theme']) && isset($_POST['id']) && isset($_POST['id_theme
     $query = $dbCo->prepare("SELECT * FROM category");
     $query->execute();
     $categories = $query->fetchAll();
-    foreach($categories as $category) {
-        if($category['id_task'] === $_POST['id'] && $category['id_theme'] === $_POST['id_theme']) {
-            header('location: index.php');
-        };
+    $filteredCategories = array_filter($categories, fn($category) => $category['id_task'] === $_POST['id'] && $category['id_theme'] === $_POST['id_theme']);
+    if (!empty($filteredCategories)) {
+        header('location: index.php');
     };
     $query = $dbCo->prepare("INSERT INTO category(id_task, id_theme) VALUES (:id, :id_theme)");
     $query->execute([
