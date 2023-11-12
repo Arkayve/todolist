@@ -130,6 +130,15 @@ else if (isset($_POST['alarm']) && isset($_SESSION['token']) && isset($_POST['to
     $_SESSION['msg'] = 6;
 }
 
+// REMOVE ALARM
+else if (isset($_POST['alarm-delete']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token'] && isset($_POST['id'])) {
+    $query = $dbCo->prepare("UPDATE task SET alarm_date = NULL WHERE id_task = :id");
+    $query->execute([
+        'id' => intval(strip_tags($_POST['id']))
+    ]);
+    $_SESSION['msg'] = 9;
+}
+
 // TAKE BACK A TASK
 else if (isset($_POST['back']) && isset($_POST['id']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token']) {
     $query = $dbCo->prepare("UPDATE task SET priority = priority + 1 WHERE state = 0");
@@ -156,6 +165,16 @@ else if (isset($_POST['theme']) && isset($_POST['id']) && isset($_POST['id_theme
         'id_theme' => intval(strip_tags($_POST['id_theme']))
     ]);
     $_SESSION['msg'] = 7;
+}
+
+// REMOVE THEME
+else if (isset($_POST['remove-theme']) && isset($_POST['id']) && isset($_POST['id_theme']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token']) {
+    $query = $dbCo->prepare("DELETE FROM category WHERE id_task = :id AND id_theme = :id_theme");
+    $query->execute([
+        'id' => intval(strip_tags($_POST['id'])),
+        'id_theme' => intval(strip_tags($_POST['id_theme']))
+    ]);
+    $_SESSION['msg'] = 8;
 };
 
 header('location: index.php');

@@ -63,7 +63,7 @@ include_once 'includes/_db.php';
                     $result = $query->fetchAll();
                     foreach ($result as $task) {
                 ?>
-                    <div class="task-container" draggable="true">
+                    <div class="task-container">
                         <?php
                             // MODIFY
                             if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
@@ -88,14 +88,30 @@ include_once 'includes/_db.php';
                                 $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
                                 $formattedDate = $thisDate->format("Y-m-d H:i");
                         ?>
+                            <div class="task-alarm">
+                        <?php
+                            if (isset($task['alarm_date'])) {
+                        ?>
                             <form action="action.php" method="POST">
-                                <input class="date" type="datetime-local" name="alarm" value="<?= $formattedDate ?>" min="<?= $formattedDate ?>" max="">
+                                <input class="task-name" type="submit" name="alarm-delete" value="❌ Supprimer l'alarme">
                                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
                                 <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
-                                <input class="task-valid" class="bg-blue" type="submit" value="➕">
                             </form>
+                            </div>
                     </div>
                         <?php
+                            } else {
+                        ?>    
+                                <form action="action.php" method="POST">
+                                    <input class="date" type="datetime-local" name="alarm" value="<?= $formattedDate ?>" min="<?= $formattedDate ?>" max="">
+                                    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                    <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                                    <input class="task-valid" class="bg-blue" type="submit" value="➕">
+                                </form>
+                            </div>
+                    </div>
+                        <?php
+                            };
                             }
                             // THEME
                             else if (isset($_GET['action']) && $_GET['action'] === 'theme' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
@@ -164,7 +180,12 @@ include_once 'includes/_db.php';
                                             ]);
                                             $result = $query->fetch();
                                 ?>
-                                    <p class="task-theme"><a><?= $result['name'] ?></a></p>
+                                    <form action="action.php" method="POST">
+                                        <input class="task-theme" type="submit" name="remove-theme" value="<?= $result['name'] ?>">
+                                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                        <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                                        <input type="hidden" name="id_theme" value="<?= $category['id_theme'] ?>">
+                                    </form>
                                 <?php                                      
                                         };
                                     };
@@ -196,7 +217,7 @@ include_once 'includes/_db.php';
             </form>
         </div>
         <div class="task-done">
-            <h2><a href="?action=display-done">Afficher les tâches terminées ⬇</a></h2>
+            <h2><a href="?action=display-done">Afficher les tâches terminées ⏬</a></h2>
             <?php
                 // TASK ALREADY DONE
                 if (isset($_GET['action']) && $_GET['action'] === 'display-done') {
@@ -217,7 +238,7 @@ include_once 'includes/_db.php';
                         <?php
                     };
             ?>
-                    <h2><a href="action.php">Masquer les tâches terminées ⬆</a></h2>
+                    <h2><a href="action.php">Masquer les tâches terminées ⏫</a></h2>
             <?php
                 };
             ?>
