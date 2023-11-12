@@ -75,14 +75,15 @@ include_once 'includes/_db.php';
             <ul>
                 <?php
                     // DISPLAY
-                    $query = $dbCo->prepare("SELECT * FROM task WHERE state = false ORDER BY priority DESC;");
-                    $query->execute();
-                    $result = $query->fetchAll();
                     if (isset($_GET['theme'])) {
-                        $query = $dbCo->prepare("SELECT * FROM task WHERE state = false AND id_task IN ( SELECT id_task FROM category ) AND :id_theme IN ( SELECT id_theme FROM category );");
+                        $query = $dbCo->prepare("SELECT * FROM task JOIN category c1 USING(id_task) WHERE state = false AND :id_theme IN ( SELECT id_theme FROM category c2 WHERE c2.id_theme = c1.id_theme );");
                         $query->execute([
                             'id_theme' => intval(strip_tags($_GET['theme']))
                         ]);
+                        $result = $query->fetchAll();
+                    } else {
+                        $query = $dbCo->prepare("SELECT * FROM task WHERE state = false ORDER BY priority DESC;");
+                        $query->execute();
                         $result = $query->fetchAll();
                     };
                     foreach ($result as $task) {
@@ -209,8 +210,7 @@ include_once 'includes/_db.php';
                             </div>
                     </div>
                         <?php
-                            }
-                            // CLASSIC                 
+                            }              
                             else {
                         ?>
                             <li id=<?= $task['id_task'] ?> class="task">
