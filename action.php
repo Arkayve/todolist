@@ -200,6 +200,16 @@ else if (isset($_POST['color']) && isset($_POST['id']) && isset($_POST['id_color
         ]);
         $_SESSION['msg'] = 10;
     };
+}
+
+// DISPLAY THEME
+else if (isset($_GET['theme'])) {
+    if ($_GET['theme'] === 'none') {
+        unset($_SESSION['theme']);
+    }
+    else {
+        $_SESSION['theme'] = $_GET['theme'];
+    };
 };
 
 header('location: index.php');

@@ -27,11 +27,11 @@ include_once './includes/_db.php';
                     $result = $query->fetchAll();
                     foreach ($result as $theme) {
                 ?>
-                    <li><a href="?theme=<?= $theme['id_theme'] ?>"><?= $theme['name'] ?></a></li>
+                    <li><a href="action.php?theme=<?= $theme['id_theme'] ?>"><?= $theme['name'] ?></a></li>
                 <?php
                     };
                 ?>
-                <a href="index.php">Toutes les tâches</a>
+                <a href="action.php?theme=none">Toutes les tâches</a>
             </ul>
         </nav>
         <a href="#" id="openBtn" class="burger-icon">🍔</a>
@@ -76,10 +76,10 @@ include_once './includes/_db.php';
             <ul>
                 <?php
                     // DISPLAY
-                    if (isset($_GET['theme'])) {
+                    if (isset($_SESSION['theme'])) {
                         $query = $dbCo->prepare("SELECT * FROM task JOIN category c1 USING(id_task) WHERE state = false AND :id_theme IN ( SELECT id_theme FROM category c2 WHERE c2.id_theme = c1.id_theme );");
                         $query->execute([
-                            'id_theme' => intval(strip_tags($_GET['theme']))
+                            'id_theme' => intval(strip_tags($_SESSION['theme']))
                         ]);
                         $result = $query->fetchAll();
                     } else {
