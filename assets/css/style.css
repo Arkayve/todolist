@@ -161,6 +161,23 @@ h2 {
     color: var(--blue);
 }
 
+.connexion-link {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+}
+
+.connexion-container {
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: space-around;
+}
+
+.hidden {
+    display: none;
+}
+
 /* NAV */
 /* Sidenav menu */
 .sidenav {

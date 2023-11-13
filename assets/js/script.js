@@ -19,3 +19,11 @@ function openNav() {
 function closeNav() {
   sidenav.classList.remove("active");
 };
+
+document.getElementById('connexion-link').addEventListener('click', function() {
+  document.getElementById('connexion-container').classList.remove('hidden');
+});
+
+document.getElementById('connexion-close').addEventListener('click', function() {
+  document.getElementById('connexion-container').classList.add('hidden');
+});

@@ -2,6 +2,7 @@
 session_start();
 require './vendor/autoload.php';
 include_once './includes/_db.php';
+include_once './includes/_function.php';
 
 // ADD
 if (isset($_POST['task-name']) && isset($_SESSION['token']) && isset($_POST['token']) && $_SESSION['token'] === $_POST['token'] && strlen($_POST['task-name']) > 0) {

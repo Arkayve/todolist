@@ -1,10 +1,9 @@
 <?php
 
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
-
 // Connection to todolist database
 try {
+    $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+    $dotenv->load();
     $dbCo = new PDO(
         $_ENV['DB_HOST'],
         $_ENV['DB_USER'],

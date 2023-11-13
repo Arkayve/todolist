@@ -2,6 +2,7 @@
 session_start();
 require './vendor/autoload.php';
 include_once './includes/_db.php';
+include_once './includes/_function.php';
 ?>
 
 <!DOCTYPE html>
@@ -53,6 +54,18 @@ include_once './includes/_db.php';
                 };
             };
         ?>
+        <a id="connexion-link" class="connexion-link" href="#">Connexion ⚡</a>
+        <div id="connexion-container" class="connexion-container hidden">
+            <form action="action.php" method="POST">
+                <input class="task-name" type="text" name="username" value="Identifiant">
+                <input class="task-name" type="text" name="password" value="Mot de passe">
+                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                <input class="task-valid" type="submit" value="✔">
+            </form>
+            <a href="#">Créer un compte</a>
+            <a href="#">Mot de passe oublié</a>
+            <a id="connexion-close" href="#">Fermer la fenêtre ✖</a>
+        </div>
     </header>
 
     <main>
