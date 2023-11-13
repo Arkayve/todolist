@@ -1,6 +1,7 @@
 <?php
 session_start();
-include_once 'includes/_db.php';
+require './vendor/autoload.php';
+include_once './includes/_db.php';
 ?>
 
 <!DOCTYPE html>

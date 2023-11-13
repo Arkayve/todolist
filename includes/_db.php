@@ -1,11 +1,14 @@
 <?php
 
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
 // Connection to todolist database
 try {
     $dbCo = new PDO(
-        'mysql:host=localhost;dbname=todolist;charset=utf8',
-        'phpcrud',
-        'phpcrudadmin'
+        $_ENV['DB_HOST'],
+        $_ENV['DB_USER'],
+        $_ENV['DB_PWD']
     );
     $dbCo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 }
