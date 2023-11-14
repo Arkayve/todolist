@@ -115,6 +115,10 @@ h2 {
     margin: 20px;
 }
 
+.arrow-back {
+    font-size: 2rem;
+}
+
 .task-valid:hover {
     background-color: #3292ff;
 }

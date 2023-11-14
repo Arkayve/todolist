@@ -64,7 +64,7 @@ session_start();
             </form>
             <a href="#">Créer un compte</a>
             <a href="#">Mot de passe oublié</a>
-            <a id="connexion-close" href="#">Fermer la fenêtre ✖</a>
+            <a class="arrow-back" href="index.php">🔙</a>
         </div>
     </header>
 
@@ -112,7 +112,7 @@ session_start();
                                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
                                 <input class="task-valid" type="submit" name="theme-valid" value="➕">
                             </form>
-                            <a href="index.php">Retour</a>
+                            <a class="arrow-back" href="index.php">🔙</a>
                         </div>
                 <?php
                     exit;
@@ -142,7 +142,7 @@ session_start();
                                 <input type="color" name="color_value" value="#ffffff" />
                                 <input class="task-valid" type="submit" name="theme-valid" value="➕">
                             </form>
-                            <a href="index.php">Retour</a>
+                            <a class="arrow-back" href="index.php">🔙</a>
                         </div>
                 <?php
                         exit;
@@ -184,6 +184,7 @@ session_start();
                                 $result = $query->fetch();
                         ?>
                             <form action="action.php" method="POST">
+                                <a class="arrow-back" href="index.php">🔙</a>
                                 <input class="task-name" type="text" name="task-modify" value="<?= $result['name'] ?>">
                                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
                                 <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
@@ -200,6 +201,7 @@ session_start();
                         <?php
                             if (isset($task['alarm_date'])) {
                         ?>
+                            <a class="arrow-back" href="index.php">🔙</a>
                             <form action="action.php" method="POST">
                                 <input class="task-name" type="submit" name="alarm-delete" value="❌ Supprimer l'alarme">
                                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
@@ -210,6 +212,7 @@ session_start();
                         <?php
                             } else {
                         ?>    
+                                <a class="arrow-back" href="index.php">🔙</a>
                                 <form action="action.php" method="POST">
                                     <input class="date" type="datetime-local" name="alarm" value="<?= $date ?>" min="<?= $date ?>" max="">
                                     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
@@ -231,6 +234,7 @@ session_start();
                                 $categories = $query->fetchAll();
                         ?>
                             <div class="theme">
+                                <a class="arrow-back" href="index.php">🔙</a>
                         <?php
                             foreach ($result as $theme) {
                                 $filteredCategories = array_filter($categories, fn($category) => $category['id_task'] === $_GET['id'] && $category['id_theme'] === $theme['id_theme']);
@@ -266,6 +270,7 @@ session_start();
                                 $result = $query->fetchAll();
                         ?>
                             <div class="theme">
+                                <a class="arrow-back" href="index.php">🔙</a>
                         <?php
                             foreach ($result as $color) {
                         ?>
