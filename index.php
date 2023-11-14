@@ -34,6 +34,7 @@ session_start();
                 ?>
                 <a href="action.php?theme=none">Toutes les tâches</a>
                 <a href="?action=manage-theme">Gérer les catégories</a>
+                <a href="?action=manage-color">Gérer les couleurs</a>
             </ul>
         </nav>
         <a href="#" id="openBtn" class="burger-icon">🍔</a>
@@ -101,10 +102,10 @@ session_start();
                         <input type="hidden" name="id_theme" value="<?= $theme['id_theme'] ?>">
                         <input class="task-valid" type="submit" name="theme-valid" value="✔">
                     </form>
-                    <?php
+                <?php
 
                         };
-                    ?>
+                ?>
                         <div class="theme-utils">
                             <form class="theme-container" action="action.php" method="POST">
                                 <input class="task-name" type="text" name="theme_add" placeholder="Nouvelle catégorie">
@@ -113,8 +114,38 @@ session_start();
                             </form>
                             <a href="index.php">Retour</a>
                         </div>
-                    <?php
+                <?php
                     exit;
+                    }
+                    // MANAGE COLOR
+                    if (isset($_GET['action']) && $_GET['action'] === 'manage-color') {
+                        $query = $dbCo->prepare("SELECT * FROM color");
+                        $query->execute();
+                        $result = $query->fetchAll();
+                        foreach ($result as $color) {
+                ?>
+                            <form class="theme-container" action="action.php" method="POST">
+                                <input class="task-valid delete" type="submit" name="color-delete" value="❌">
+                                <input class="task-name" type="text" name="color_name" value="<?= $color['name'] ?>">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input type="hidden" name="id_color" value="<?= $color['id_color'] ?>">
+                                <input type="color" name="color_value" value="<?= $color['hex_value'] ?>" />
+                                <input class="task-valid" type="submit" name="color-valid" value="✔">
+                            </form>
+                <?php
+                        };
+                ?>
+                        <div class="theme-utils">
+                            <form class="theme-container" action="action.php" method="POST">
+                                <input class="task-name" type="text" name="color_add" placeholder="Nouvelle couleur">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input type="color" name="color_value" value="#ffffff" />
+                                <input class="task-valid" type="submit" name="theme-valid" value="➕">
+                            </form>
+                            <a href="index.php">Retour</a>
+                        </div>
+                <?php
+                        exit;
                     }
                     // DISPLAY
                     else if (isset($_SESSION['theme'])) {

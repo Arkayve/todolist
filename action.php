@@ -247,6 +247,38 @@ else if (isset($_REQUEST['theme_add']) && isset($_SESSION['token']) && isset($_R
     $_SESSION['msg'] = 15;
 }
 
+// MANAGE COLOR
+else if (isset($_REQUEST['color_name']) && isset($_REQUEST['id_color']) && isset($_SESSION['token']) && isset($_REQUEST['token']) && $_SESSION['token'] === $_REQUEST['token']) {
+    if (isset($_REQUEST['color-delete'])) {
+        $query = $dbCo->prepare("UPDATE task SET id_color = NULL WHERE id_color = :id_color");
+        $query->execute([
+            'id_color' => intval($_REQUEST['id_color'])
+        ]);
+        $query = $dbCo->prepare("DELETE FROM color WHERE id_color = :id_color");
+        $query->execute([
+            'id_color' => intval($_REQUEST['id_color'])
+        ]);
+        $_SESSION['msg'] = 21;
+    }
+    else if (isset($_REQUEST['color-valid']) && strlen($_REQUEST['color_name']) > 0) {
+        $query = $dbCo->prepare("UPDATE color SET name = :color_name, hex_value = :color_value WHERE id_color = :id_color");
+        $query->execute([
+            'color_name' => $_REQUEST['color_name'],
+            'color_value' => $_REQUEST['color_value'],
+            'id_color' => intval($_REQUEST['id_color'])
+        ]);
+        $_SESSION['msg'] = 22;
+    };
+}
+else if (isset($_REQUEST['color_add']) && isset($_SESSION['token']) && isset($_REQUEST['token']) && $_SESSION['token'] === $_REQUEST['token']) {
+    $query = $dbCo->prepare("INSERT INTO color(name, hex_value) VALUES (:color_name, :color_value);");
+    $query->execute([
+        'color_name' => $_REQUEST['color_add'],
+        'color_value' => $_REQUEST['color_value']
+    ]);
+    $_SESSION['msg'] = 23;
+}
+
 // DISPLAY THEME
 else if (isset($_REQUEST['theme'])) {
     if ($_REQUEST['theme'] === 'none') {
