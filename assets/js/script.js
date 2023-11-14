@@ -20,6 +20,7 @@ function closeNav() {
   sidenav.classList.remove("active");
 };
 
+// CONNEXION
 document.getElementById('connexion-link').addEventListener('click', function() {
   document.getElementById('connexion-container').classList.remove('hidden');
 });

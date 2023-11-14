@@ -103,11 +103,27 @@ h2 {
 .task-valid {
     background-color: var(--blue);
     padding: 10px;
-    border-radius: 40px;
+    border-radius: 30px;
+    min-width: 40px;
+}
+
+.delete {
+    background-color: var(--medium-grey)
+}
+
+.theme-container {
+    margin: 20px;
 }
 
 .task-valid:hover {
     background-color: #3292ff;
+}
+
+.theme-utils {
+    display: flex;
+    flex-direction: column;
+    height: 50px;
+    justify-content: space-between;
 }
 
 .notif {

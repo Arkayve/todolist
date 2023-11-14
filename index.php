@@ -1,8 +1,8 @@
 <?php
-session_start();
 require './vendor/autoload.php';
 include_once './includes/_db.php';
 include_once './includes/_function.php';
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -33,6 +33,7 @@ include_once './includes/_function.php';
                     };
                 ?>
                 <a href="action.php?theme=none">Toutes les tâches</a>
+                <a href="?action=manage-theme">Gérer les catégories</a>
             </ul>
         </nav>
         <a href="#" id="openBtn" class="burger-icon">🍔</a>
@@ -41,11 +42,9 @@ include_once './includes/_function.php';
             $query = $dbCo->prepare("SELECT alarm_date FROM task WHERE alarm_date IS NOT NULL;");
             $query->execute();
             $result = $query->fetchAll();
-            $thisDate = new DateTime();
-            $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
-            $formattedDate = $thisDate->format("Y-m-d");
+            $date = substr(getActualDate(), 0, -9);
             foreach ($result as $alarmDate) {
-                if ($formattedDate === substr($alarmDate['alarm_date'], 0, -9)) {
+                if ($date === substr($alarmDate['alarm_date'], 0, -9)) {
                         $msg = "Une tâche est notée pour aujourd'hui.";
                         echo "<script>alert('$msg');</script>";
                 ?>
@@ -88,9 +87,38 @@ include_once './includes/_function.php';
         <div class="task-list">
             <ul>
                 <?php
+                    // MANAGE THEME
+                    if (isset($_GET['action']) && $_GET['action'] === 'manage-theme') {
+                        $query = $dbCo->prepare("SELECT * FROM theme");
+                        $query->execute();
+                        $result = $query->fetchAll();
+                        foreach ($result as $theme) {
+                ?>
+                    <form class="theme-container" action="action.php" method="POST">
+                        <input class="task-valid delete" type="submit" name="theme-delete" value="❌">
+                        <input class="task-name" type="text" name="theme_mod" value="<?= $theme['name'] ?>">
+                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                        <input type="hidden" name="id_theme" value="<?= $theme['id_theme'] ?>">
+                        <input class="task-valid" type="submit" name="theme-valid" value="✔">
+                    </form>
+                    <?php
+
+                        };
+                    ?>
+                        <div class="theme-utils">
+                            <form class="theme-container" action="action.php" method="POST">
+                                <input class="task-name" type="text" name="theme_add" placeholder="Nouvelle catégorie">
+                                <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                                <input class="task-valid" type="submit" name="theme-valid" value="➕">
+                            </form>
+                            <a href="index.php">Retour</a>
+                        </div>
+                    <?php
+                    exit;
+                    }
                     // DISPLAY
-                    if (isset($_SESSION['theme'])) {
-                        $query = $dbCo->prepare("SELECT * FROM task JOIN category c1 USING(id_task) WHERE state = false AND :id_theme IN ( SELECT id_theme FROM category c2 WHERE c2.id_theme = c1.id_theme );");
+                    else if (isset($_SESSION['theme'])) {
+                        $query = $dbCo->prepare("SELECT * FROM task JOIN category c1 USING(id_task) WHERE state = false AND :id_theme IN ( SELECT id_theme FROM category c2 WHERE c2.id_theme = c1.id_theme ) ORDER BY priority DESC;");
                         $query->execute([
                             'id_theme' => intval(strip_tags($_SESSION['theme']))
                         ]);
@@ -135,9 +163,7 @@ include_once './includes/_function.php';
                             }
                             // ALARM
                             else if (isset($_GET['action']) && $_GET['action'] === 'alarm' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
-                                $thisDate = new DateTime();
-                                $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
-                                $formattedDate = $thisDate->format("Y-m-d H:i");
+                                $date = substr(getActualDate(), 0, -3);
                         ?>
                             <div class="task-alarm">
                         <?php
@@ -154,7 +180,7 @@ include_once './includes/_function.php';
                             } else {
                         ?>    
                                 <form action="action.php" method="POST">
-                                    <input class="date" type="datetime-local" name="alarm" value="<?= $formattedDate ?>" min="<?= $formattedDate ?>" max="">
+                                    <input class="date" type="datetime-local" name="alarm" value="<?= $date ?>" min="<?= $date ?>" max="">
                                     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
                                     <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
                                     <input class="task-valid" class="bg-blue" type="submit" value="➕">
@@ -180,7 +206,7 @@ include_once './includes/_function.php';
                                 if (!empty($filteredCategories)) {
                         ?>
                             <form action="action.php" method="POST">
-                                <input class="theme-name bg-blue" type="submit" name="theme" value="<?= $theme['name'] ?>">
+                                <input class="theme-name bg-blue" type="submit" name="remove-theme" value="<?= $theme['name'] ?>">
                                 <input type="hidden" name="id_theme" value="<?= $theme['id_theme'] ?>">
                                 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
                                 <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
@@ -233,10 +259,8 @@ include_once './includes/_function.php';
                                     <time class="alarm" datetime="<?= $task['alarm_date'] ?>">
                                         <?php
                                             echo substr($task['alarm_date'], 0, -3);
-                                            $thisDate = new DateTime();
-                                            $thisDate->setTimezone(new DateTimeZone('Europe/Paris'));
-                                            $formattedDate = $thisDate->format("Y-m-d");
-                                            if ($task['alarm_date'] <> NULL && $formattedDate === substr($task['alarm_date'], 0, -9)) echo '🚩';
+                                            $date = substr(getActualDate(), 0, -9);
+                                            if ($task['alarm_date'] <> NULL && $date === substr($task['alarm_date'], 0, -9)) echo '🚩';
                                         ?>
                                     </time>
                                 </div>
@@ -301,25 +325,26 @@ include_once './includes/_function.php';
                     $query->execute();
                     $result = $query->fetchAll();
                     foreach ($result as $task) {
-                        ?>
-                            <div class="task-container">
-                                <li id=<?= $task['id_task'] ?> class="task">
-                                    <form action="action.php" method="POST">
-                                        <input class="task-back" type="submit" name="back" value="🔄">
-                                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-                                        <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
-                                    </form>
-                                    <h2><?= $task['name'] ?></h2>
-                                    <div>
-                                        <p>Tâche effectuée le :</p>
-                                        <time class="done-time" datetime="<?= $task['done_date'] ?>"><?= $task['done_date'] ?></time>
-                                    </div>
-                                </li>
-                            </div>
-                        <?php
+        ?>
+            <div class="task-container">
+                <li id=<?= $task['id_task'] ?> class="task">
+                    <form action="action.php" method="POST">
+                        <input class="task-back" type="submit" name="back" value="♻️">
+                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                        <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                    </form>
+                    <h2><?= $task['name'] ?></h2>
+                    <div>
+                        <p>Tâche effectuée le :</p>
+                        <time class="done-time" datetime="<?= $task['done_date'] ?>"><?= $task['done_date'] ?></time>
+                    </div>
+                </li>
+            </div>
+        <?php
                     };       
                 } else {
-            ?>
+                if (isset($_SESSION['theme'])) echo '<h2><a href="action.php?theme=none">Afficher toutes les tâches 🔄</a></h2>'
+        ?>
                 <h2><a href="?action=display-done">Afficher les tâches terminées ⏬</a></h2>
             <?php
                 };
