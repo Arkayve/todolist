@@ -68,6 +68,10 @@ h2 {
     align-items: center;
 }
 
+.txt-container {
+    width: -webkit-fill-available;
+}
+
 .task-utils {
     display: flex;
 }

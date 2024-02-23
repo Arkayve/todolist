@@ -291,7 +291,7 @@ getToken();
                             else {
                         ?>
                             <li id=<?= $task['id_task'] ?> class="task">
-                                <div>
+                                <div class="txt-container">
                                     <h2><?= $task['name'] ?></h2>
                                     <time class="alarm" datetime="<?= $task['alarm_date'] ?>">
                                         <?php
