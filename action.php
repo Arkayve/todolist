@@ -200,7 +200,7 @@ else if (isset($_REQUEST['color']) && isset($_REQUEST['id']) && isset($_REQUEST[
         'id' => intval($_REQUEST['id'])
     ]);
     $result = $query->fetch();
-    if (isset($result['id_color']) && $result['id_color'] === $_REQUEST['id_color']) {
+    if (isset($result['id_color']) && intval($result['id_color']) === intval($_REQUEST['id_color'])) {
         $query = $dbCo->prepare("UPDATE task SET id_color = NULL WHERE id_task = :id");
         $query->execute([
             'id' => intval($_REQUEST['id'])

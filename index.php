@@ -3,6 +3,7 @@ require './vendor/autoload.php';
 include_once './includes/_db.php';
 include_once './includes/_function.php';
 session_start();
+getToken();
 ?>
 
 <!DOCTYPE html>
@@ -176,7 +177,7 @@ session_start();
                 <?php
                         };
                             // MODIFY
-                            if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                            if (isset($_GET['action']) && $_GET['action'] === 'mod' && isset($_GET['id']) && intval($task['id_task']) === intval($_GET['id'])) {
                                 $query = $dbCo->prepare("SELECT name FROM task WHERE id_task = :id");
                                 $query->execute([
                                     'id' => intval(strip_tags($_GET['id']))
@@ -194,7 +195,7 @@ session_start();
                         <?php
                             }
                             // ALARM
-                            else if (isset($_GET['action']) && $_GET['action'] === 'alarm' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                            else if (isset($_GET['action']) && $_GET['action'] === 'alarm' && isset($_GET['id']) && intval($task['id_task']) === intval($_GET['id'])) {
                                 $date = substr(getActualDate(), 0, -3);
                         ?>
                             <div class="task-alarm">
@@ -225,7 +226,7 @@ session_start();
                             };
                             }
                             // THEME
-                            else if (isset($_GET['action']) && $_GET['action'] === 'theme' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                            else if (isset($_GET['action']) && $_GET['action'] === 'theme' && isset($_GET['id']) && intval($task['id_task']) === intval($_GET['id'])) {
                                 $query = $dbCo->prepare("SELECT * FROM theme");
                                 $query->execute();
                                 $result = $query->fetchAll();
@@ -264,7 +265,7 @@ session_start();
                         <?php
                             }
                             // COLOR
-                            else if (isset($_GET['action']) && $_GET['action'] === 'color' && isset($_GET['id']) && $task['id_task'] === $_GET['id']) {
+                            else if (isset($_GET['action']) && $_GET['action'] === 'color' && isset($_GET['id']) && intval($task['id_task']) === intval($_GET['id'])) {
                                 $query = $dbCo->prepare("SELECT * FROM color");
                                 $query->execute();
                                 $result = $query->fetchAll();
@@ -294,9 +295,11 @@ session_start();
                                     <h2><?= $task['name'] ?></h2>
                                     <time class="alarm" datetime="<?= $task['alarm_date'] ?>">
                                         <?php
-                                            echo substr($task['alarm_date'], 0, -3);
-                                            $date = substr(getActualDate(), 0, -9);
-                                            if ($task['alarm_date'] <> NULL && $date === substr($task['alarm_date'], 0, -9)) echo '🚩';
+                                            if (isset($task['alarm_date'])) {
+                                                echo substr($task['alarm_date'], 0, -3);
+                                                $date = substr(getActualDate(), 0, -9);
+                                                if ($task['alarm_date'] <> NULL && $date === substr($task['alarm_date'], 0, -9)) echo '🚩';
+                                            };
                                         ?>
                                     </time>
                                 </div>

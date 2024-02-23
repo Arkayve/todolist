@@ -1,3 +1,4 @@
 <files .env>
-    Deny from all
+    Require all denied
+    Require local granted
 </files>
