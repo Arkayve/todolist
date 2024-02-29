@@ -8,6 +8,6 @@ First import db_creation/todolist.sql in your phpMyAdmin.
 
 Then use terminal and run 'composer install' in project folder to get project dependances.
 
-Don't forget to create .env file (see .env.example).
+Don't forget to create .env file (see .env.example and the end of todolist.sql file for informations).
 
 You can add, modify, delete tasks, categories, colors, change the priority order of tasks, functional burger menu.
